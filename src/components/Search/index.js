@@ -1,41 +1,55 @@
 import React from "react";
+import { fetchProperties } from "../../api";
 
-const Search = ({ searchTerm, handleClearSearchTerm, handleSearchTerm }) => {
+const Search = ({
+  searchTerm,
+  setSearchTerm,
+  handleClearSearchTerm,
+  handleSearchTerm,
+  setSearchResult
+}) => {
+  const searchProperties = (e) => {
+    e.preventDefault();
+    setSearchTerm("");
+    fetchProperties({ address: searchTerm }).then((data) => {
+      setSearchResult(data.properties);
+    });
+  };
+
   return (
-    <div className="search-wrapper">
-      <label
-        className="search-label"
-        aria-label="search address"
-        htmlFor="search-address"
-      >
-        Search
-      </label>
-      <span className="clearable">
-        <i
-          onClick={handleClearSearchTerm}
-          className={`${searchTerm.length > 0 ? `clearable-clear` : "empty"} `}
+    <form onSubmit={searchProperties}>
+      <div className="search-wrapper">
+        <label
+          className="search-label"
+          aria-label="search address"
+          htmlFor="search-address"
         >
-          &times;
-        </i>
-        <input
-          className="search-input"
-          value={searchTerm}
-          onChange={handleSearchTerm}
-          placeholder="Address"
-        />
-      </span>
+          Search
+        </label>
+        <span className="clearable">
+          <i
+            onClick={handleClearSearchTerm}
+            className={`${
+              searchTerm.length > 0 ? `clearable-clear` : "empty"
+            } `}
+          >
+            &times;
+          </i>
+          <input
+            className="search-input"
+            value={searchTerm}
+            onChange={handleSearchTerm}
+            placeholder="Address"
+          />
+        </span>
 
-      {/* <input
-        onClick={handleClearSearchTerm}
-        className={`search-clear ${searchTerm.length === 0 ? `empty` : ""}`}
-        aria-label="Clear search term"
-        type="button"
-        value="X"
-      /> */}
-      <div className="search-btn-wrapper">
-        <button className="search-button">Search</button>
+        <div className="search-btn-wrapper">
+          <button onClick={searchProperties} className="search-button">
+            Search
+          </button>
+        </div>
       </div>
-    </div>
+    </form>
   );
 };
 
