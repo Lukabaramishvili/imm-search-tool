@@ -24,3 +24,9 @@
   font-size: 2rem;
   font-weight: 400;
 }
+
+@media (max-width: 547px) {
+  .header-text {
+    font-size: 1.2rem;
+  }
+}

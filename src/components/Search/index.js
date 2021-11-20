@@ -1,21 +1,11 @@
 import React from "react";
-import { fetchProperties } from "../../api";
 
 const Search = ({
   searchTerm,
-  setSearchTerm,
   handleClearSearchTerm,
   handleSearchTerm,
-  setSearchResult
+  searchProperties
 }) => {
-  const searchProperties = (e) => {
-    e.preventDefault();
-    setSearchTerm("");
-    fetchProperties({ address: searchTerm }).then((data) => {
-      setSearchResult(data.properties);
-    });
-  };
-
   return (
     <form onSubmit={searchProperties}>
       <div className="search-wrapper">
@@ -44,9 +34,7 @@ const Search = ({
         </span>
 
         <div className="search-btn-wrapper">
-          <button onClick={searchProperties} className="search-button">
-            Search
-          </button>
+          <button className="search-button">Search</button>
         </div>
       </div>
     </form>
