@@ -1,14 +1,51 @@
 import React from "react";
 
-const PropertyTypes = () => {
+const PropertyTypes = ({
+  propertyTypes,
+  properties,
+  setFilteredPropertyTypes
+}) => {
+  const handlePropertyFilters = (types) => {
+    const filteredProps = properties.filter((property) => {
+      if (types === "All") {
+        return properties;
+      } else {
+        return property.propertyType === types;
+      }
+    });
+    setFilteredPropertyTypes(filteredProps);
+  };
+
   return (
     <>
-      <h2 className="property-title">Search results</h2>
+      <h2 className="property-title">Property types</h2>
       <ul className="property-list">
-        <li>1</li>
-        <li>2</li>
-        <li>3</li>
-        <li>4</li>
+        <li>
+          <button
+            className="property-list-btn"
+            onClick={(e) => {
+              handlePropertyFilters("All");
+            }}
+          >
+            All
+          </button>
+        </li>
+        {propertyTypes.map((propertyFilter) => {
+          return (
+            <li key={propertyFilter.label}>
+              <button
+                className={`property-list-btn ${
+                  propertyFilter.value ? ".selected" : null
+                }`}
+                onClick={(e) => {
+                  handlePropertyFilters(propertyFilter.value);
+                }}
+              >
+                {propertyFilter.label}
+              </button>
+            </li>
+          );
+        })}
       </ul>
     </>
   );

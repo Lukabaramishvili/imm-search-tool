@@ -30,3 +30,21 @@
   grid-column: 1/2;
   grid-row: 3/4;
 }
+
+@media (max-width: 547px) {
+  .main-container {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .main-container section:last-child {
+    order: -1;
+  }
+  .main-container section:first-child {
+    order: -1;
+  }
+
+  .types-section {
+    margin-bottom: 20px;
+  }
+}
