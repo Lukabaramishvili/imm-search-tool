@@ -2,7 +2,7 @@
 
 IMMO search tool is a Frontend home assignment provided by IMMO team.
 
-[Live Demo](immo-search.netlify.app)
+[Live Demo](https://immo-search.netlify.app/)
 
 ## To run locally: 
 - Clone the repository locally in your machine.
