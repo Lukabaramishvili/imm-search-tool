@@ -8,6 +8,7 @@ import Search from "../Search";
 import SearchResults from "../SearchResults";
 import SelectedProperties from "../SelectedProperties";
 import PropertyTypes from "../PropertyTypes";
+import Spinner from "../../utils/Spinner";
 
 const Main = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -44,33 +45,39 @@ const Main = () => {
     setPropertyTypes(result.propertyTypes);
   };
 
-  const searchProperties = (e) => {
+  const searchProperties = async (e) => {
     e.preventDefault();
+    if (searchTerm === "") {
+      return alert("Please enter address");
+    }
     setSearchTerm("");
-    fetchProperties({ address: searchTerm }).then((data) => {
+    await fetchProperties({ address: searchTerm }).then((data) => {
       setSearchResult(data.properties);
     });
   };
 
   useEffect(() => {
     getPropertyTypes();
-    setError(false);
     setLoading(true);
     try {
+      setError(false);
       let result = [];
       if (searchResult.length > 0) {
         searchResult.forEach((property) => {
           fetchPropertyDetails(property.id).then((res) => {
+            setError(false);
             result = [...result, res.property];
             setProperties(result);
           });
         });
       }
     } catch (error) {
-      setError(true);
+      setError(error.message);
     }
     setLoading(false);
   }, [searchResult]);
+
+  console.log(searchResult);
 
   return (
     <>
@@ -89,7 +96,9 @@ const Main = () => {
           <div className="selected-section">Something went wrong ...</div>
         )}
         {loading ? (
-          <div className="selected-section">Loading ...</div>
+          <div className="selected-section">
+            <Spinner />
+          </div>
         ) : (
           <>
             <section className="selected-section">
