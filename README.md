@@ -6,8 +6,8 @@ IMMO search tool is a Frontend home assignment provided by IMMO team.
 
 ## To run locally: 
 - Clone the repository locally in your machine.
-- `npm install` to install dependencies
-- `npm start` to run; The application should be running on http://localhost:3000/
+- `yarn` to install dependencies
+- `yarn start` to run; The application should be running on http://localhost:3000/
 
 ## Tech Stack:
 - React
