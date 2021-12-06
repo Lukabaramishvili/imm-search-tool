@@ -2,12 +2,18 @@ import React from "react";
 
 const Search = ({
   searchTerm,
+  propertyType,
   handleClearSearchTerm,
   handleSearchTerm,
   searchProperties
 }) => {
   return (
-    <form onSubmit={searchProperties}>
+    <form
+      onSubmit={(event) => {
+        event.preventDefault();
+        searchProperties(searchTerm, propertyType);
+      }}
+    >
       <div className="search-wrapper">
         <label
           className="search-label"

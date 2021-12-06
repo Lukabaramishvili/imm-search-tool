@@ -2,19 +2,21 @@ import React from "react";
 
 const PropertyTypes = ({
   propertyTypes,
-  properties,
-  setFilteredPropertyTypes
+  propertyType,
+  setPropertyType,
+  searchProperties,
+  searchTerm
 }) => {
-  const handlePropertyFilters = (types) => {
-    const filteredProps = properties.filter((property) => {
-      if (types === "All") {
-        return properties;
-      } else {
-        return property.propertyType === types;
-      }
-    });
-    setFilteredPropertyTypes(filteredProps);
-  };
+  // const handlePropertyFilters = (types) => {
+  //   const filteredProps = properties.filter((property) => {
+  //     if (types === "All") {
+  //       return properties;
+  //     } else {
+  //       return property.propertyType === types;
+  //     }
+  //   });
+  //   setFilteredPropertyTypes(filteredProps);
+  // };
 
   return (
     <>
@@ -22,9 +24,12 @@ const PropertyTypes = ({
       <ul className="property-list">
         <li>
           <button
-            className="property-list-btn"
-            onClick={(e) => {
-              handlePropertyFilters("All");
+            className={`property-list-btn ${
+              propertyType === "All" ? "selected" : null
+            }`}
+            onClick={() => {
+              setPropertyType("All");
+              searchProperties(searchTerm);
             }}
           >
             All
@@ -32,13 +37,14 @@ const PropertyTypes = ({
         </li>
         {propertyTypes.map((propertyFilter) => {
           return (
-            <li key={propertyFilter.label}>
+            <li key={propertyFilter.value}>
               <button
                 className={`property-list-btn ${
-                  propertyFilter.value ? ".selected" : null
+                  propertyType === propertyFilter.value ? "selected" : null
                 }`}
-                onClick={(e) => {
-                  handlePropertyFilters(propertyFilter.value);
+                onClick={() => {
+                  setPropertyType(propertyFilter.value);
+                  searchProperties(searchTerm, propertyFilter.value);
                 }}
               >
                 {propertyFilter.label}

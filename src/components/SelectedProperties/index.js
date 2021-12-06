@@ -23,7 +23,10 @@ const SelectedProperties = ({ headingColumns, title, selectedProperties }) => {
           })}
         </Table>
       ) : (
-        <h3>Selected properties section - No properties selected yet</h3>
+        <>
+          <h3>Selected properties section</h3>
+          <p className="selected-prop-message">No properties selected yet</p>
+        </>
       )}
     </>
   );

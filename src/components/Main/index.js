@@ -12,10 +12,9 @@ import Spinner from "../../utils/Spinner";
 
 const Main = () => {
   const [searchTerm, setSearchTerm] = useState("");
-  const [searchResult, setSearchResult] = useState("");
-  const [properties, setProperties] = useState([]);
+  const [properties, setProperties] = useState(null);
   const [selectedProperties, setSelectedProperties] = useState([]);
-  const [filteredPropertyTypes, setFilteredPropertyTypes] = useState([]);
+  const [propertyType, setPropertyType] = useState("All");
   const [propertyTypes, setPropertyTypes] = useState([]);
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -26,6 +25,7 @@ const Main = () => {
 
   const handleClearSearchTerm = () => {
     setSearchTerm("");
+    setProperties(null);
   };
 
   const handleCheckBoxClick = (property, checked) => {
@@ -45,80 +45,83 @@ const Main = () => {
     setPropertyTypes(result.propertyTypes);
   };
 
-  const searchProperties = async (e) => {
-    e.preventDefault();
-    if (searchTerm === "") {
-      return alert("Please enter address");
-    }
-    setSearchTerm("");
-    await fetchProperties({ address: searchTerm }).then((data) => {
-      setSearchResult(data.properties);
-    });
-  };
-
   useEffect(() => {
     getPropertyTypes();
-    setLoading(true);
+  }, []);
+
+  const searchProperties = async (address, propertyType) => {
     try {
+      setLoading(true);
       setError(false);
-      let result = [];
-      if (searchResult.length > 0) {
-        searchResult.forEach((property) => {
-          fetchPropertyDetails(property.id).then((res) => {
-            setError(false);
-            result = [...result, res.property];
-            setProperties(result);
-          });
+      let response;
+      if (searchTerm === "") {
+        return alert("Please enter address");
+      }
+      if (propertyType === "All") {
+        response = await fetchProperties({ address: address });
+      } else {
+        response = await fetchProperties({
+          address: address,
+          propertyType: propertyType
         });
       }
+      const allProperties = response.properties.map((property) =>
+        fetchPropertyDetails(property.id)
+      );
+      Promise.all(allProperties)
+        .then((data) =>
+          data.map((item) => {
+            return item.property;
+          })
+        )
+        .then((values) => setProperties(values));
     } catch (error) {
       setError(error.message);
     }
     setLoading(false);
-  }, [searchResult]);
+  };
 
-  console.log(searchResult);
+  console.log(properties);
 
   return (
     <>
       <main className="main-container">
-        <section className="search-section">
-          <Search
-            searchTerm={searchTerm}
-            setSearchTerm={setSearchTerm}
-            handleClearSearchTerm={handleClearSearchTerm}
-            handleSearchTerm={handleSearchTerm}
-            setSearchResult={setSearchResult}
-            searchProperties={searchProperties}
-          />
-        </section>
         {error && (
           <div className="selected-section">Something went wrong ...</div>
         )}
+        <section className="search-section">
+          <Search
+            searchTerm={searchTerm}
+            propertyType={propertyType}
+            setSearchTerm={setSearchTerm}
+            handleClearSearchTerm={handleClearSearchTerm}
+            handleSearchTerm={handleSearchTerm}
+            searchProperties={searchProperties}
+          />
+        </section>
+        <section className="selected-section">
+          <SelectedProperties
+            title={"Selected properties"}
+            selectedProperties={selectedProperties}
+            headingColumns={[
+              "Address",
+              "Postcode",
+              "Property type",
+              "Number of rooms",
+              "Floor area (m2)"
+            ]}
+          />
+        </section>
         {loading ? (
           <div className="selected-section">
             <Spinner />
           </div>
         ) : (
-          <>
-            <section className="selected-section">
-              <SelectedProperties
-                properties={properties}
-                title={"Selected properties"}
-                selectedProperties={selectedProperties}
-                headingColumns={[
-                  "Address",
-                  "Postcode",
-                  "Property type",
-                  "Number of rooms",
-                  "Floor area (m2)"
-                ]}
-              />
-            </section>
-            <section className="table-section">
+          <section className="table-section">
+            {properties ? (
               <SearchResults
                 properties={properties}
-                filteredPropertyTypes={filteredPropertyTypes}
+                propertyType={propertyType}
                 title={"Search results"}
                 handleCheckBoxClick={handleCheckBoxClick}
                 headingColumns={[
@@ -130,16 +133,20 @@ const Main = () => {
                   "Floor area (m2)"
                 ]}
               />
-            </section>
-            <section className="types-section">
-              <PropertyTypes
-                propertyTypes={propertyTypes}
-                properties={properties}
-                setFilteredPropertyTypes={setFilteredPropertyTypes}
-              />
-            </section>
-          </>
+            ) : (
+              <h3>Please search for an address to view details</h3>
+            )}
+          </section>
         )}
+        <section className="types-section">
+          <PropertyTypes
+            searchTerm={searchTerm}
+            searchProperties={searchProperties}
+            propertyTypes={propertyTypes}
+            propertyType={propertyType}
+            setPropertyType={setPropertyType}
+          />
+        </section>
       </main>
     </>
   );
